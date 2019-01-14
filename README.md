@@ -4,10 +4,17 @@ I didn't see any good **Python** function for **converting point cloud datatype 
 The script [lib_cloud_conversion_between_Open3D_and_ROS.py](lib_cloud_conversion_between_Open3D_and_ROS.py)
 contains 2 functions:   
 * convertCloudFromOpen3dToRos  
-* convertCloudFromRosToOpen3d
+* convertCloudFromRosToOpen3d  
+
+where the ROS cloud format is indicating this: "[sensor_msgs/PointCloud2.msg](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/PointCloud2.html)".
 
 The script also contains a test case, which does such a thing:  
-(1) Read a open3d_cloud from .pcd file by Open3D, (2) convert it to ros_cloud of [sensor_msgs/PointCloud2.msg](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/PointCloud2.html), (3) publish ros_cloud to topic, (4) subscribe the ros_cloud from this topic, and (5) convert it back to open3d_cloud, and finally (6) display it.  
+(1) Read a open3d_cloud from .pcd file by Open3D.
+(2) Convert it to ros_cloud.
+(3) Publish ros_cloud to topic.
+(4) Subscribe the ros_cloud from the same topic.
+(5) Convert ros_cloud back to open3d_cloud.
+(6) Display it.  
 
 You can test it by:  
 > $ rosrun open3d_ros_pointcloud_conversion lib_cloud_conversion_between_Open3D_and_ROS.py
@@ -17,21 +24,21 @@ You can test it by:
     https://github.com/karaage0703/open3d_ros  
     It contains codes for converting point cloud from open3d to ros. I copied pieces of codes from it.  
     However, when converting cloud from ros to open3d, it writes the cloud to file and then use open3d to read file, which is slower.  
-    In my view, its scripts and function/variable namings are not well organized. So I decide to rewrite it. 
+    In my view, its scripts and function/variable namings are not well organized. So I decided to rewrite it. 
 
 * PointCloud2 message type:  
     http://docs.ros.org/melodic/api/sensor_msgs/html/msg/PointCloud2.html
 
-* function of sensor_msgs.point_cloud2.create_cloud()  
+* Function of sensor_msgs.point_cloud2.create_cloud()  
     http://docs.ros.org/jade/api/sensor_msgs/html/namespacesensor__msgs_1_1point__cloud2.html#ad456fcf9391ad2ed2279df69572ca71d
 
-* open3d: from numpy to open3d pointcloud  
+* Open3d: from numpy to open3d pointcloud  
 http://www.open3d.org/docs/tutorial/Basic/working_with_numpy.html#from-numpy-to-open3d-pointcloud
 
 ## Some explanation and testing of sensor_msgs::PointCloud2's contents
-1. To test it, first use the following c++ code to generate a PointCloud2 message from pcl's cloud.
+1. To test the format of PointCloud2 before writing these python conversion functions, I used the following c++ pcl functions to generate a PointCloud2 message from pcl's cloud.
 ```
-  pcl::PointCloud<PointXYZRGB>::Ptr pcl_cloud;
+  pcl::PointCloud<PointXYZRGB>::Ptr pcl_cloud = (some function to read in a cloud);
   sensor_msgs::PointCloud2 ros_cloud;
   pcl::toROSMsg(*pcl_cloud, ros_cloud);
 ```

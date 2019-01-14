@@ -1,6 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+'''
+This script contains 2 functions for converting cloud format between Open3D and ROS:   
+* convertCloudFromOpen3dToRos  
+* convertCloudFromRosToOpen3d
+where the ROS format refers to "sensor_msgs/PointCloud2.msg" type.
+
+This script also contains a test case, which does such a thing:  
+(1) Read a open3d_cloud from .pcd file by Open3D.
+(2) Convert it to ros_cloud.
+(3) Publish ros_cloud to topic.
+(4) Subscribe the ros_cloud from the same topic.
+(5) Convert ros_cloud back to open3d_cloud.
+(6) Display it.  
+You can test this script's function by rosrun this script.
+
+'''
+
 import open3d
 import numpy as np
 
