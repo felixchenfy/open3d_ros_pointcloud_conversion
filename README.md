@@ -1,4 +1,7 @@
 
+## Content: Two functions for Open3D and ROS point cloud conversion
+## Supported cloud type: XYZ and XYZRGB
+
 I didn't see any good **Python** function for **converting point cloud datatype between Open3D and ROS**, so I made this repo.
 
 The script [lib_cloud_conversion_between_Open3D_and_ROS.py](lib_cloud_conversion_between_Open3D_and_ROS.py)
@@ -14,7 +17,7 @@ The script also contains a test case, which does such a thing:
 (3) Publish ros_cloud to topic.
 (4) Subscribe the ros_cloud from the same topic.
 (5) Convert ros_cloud back to open3d_cloud.
-(6) Display it.  
+(6) Display it and save it to .pcd file.  
 
 You can test it by:  
 > $ rosrun open3d_ros_pointcloud_conversion lib_cloud_conversion_between_Open3D_and_ROS.py
