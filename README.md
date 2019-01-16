@@ -25,7 +25,7 @@ You can test it by:
 ## References
 * A very useful but bad documented github repo:  
     https://github.com/karaage0703/open3d_ros  
-    It contains codes for converting point cloud from open3d to ros. I copied pieces of codes from it.  
+    It (only) contains codes for converting XYZ point cloud from open3d to ros. I copied pieces of codes from it.  
     However, when converting cloud from ros to open3d, it writes the cloud to file and then use open3d to read file, which is slower.  
     In my view, its scripts and function/variable namings are not well organized. So I decided to rewrite it. 
 

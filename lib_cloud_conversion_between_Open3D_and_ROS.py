@@ -20,6 +20,7 @@ You can test this script's function by rosrun this script.
 
 import open3d
 import numpy as np
+from ctypes import * # convert float to uint32
 
 import rospy
 from std_msgs.msg import Header
@@ -40,6 +41,9 @@ BIT_MOVE_16 = 2**16
 BIT_MOVE_8 = 2**8
 convert_rgbUint32_to_tuple = lambda rgb_uint32: (
     (rgb_uint32 & 0x00ff0000)>>16, (rgb_uint32 & 0x0000ff00)>>8, (rgb_uint32 & 0x000000ff)
+)
+convert_rgbFloat_to_tuple = lambda rgb_float: convert_rgbUint32_to_tuple(
+    int(cast(pointer(c_float(rgb_float)), POINTER(c_uint32)).contents.value)
 )
 
 # Convert the datatype of point cloud from Open3D to ROS PointCloud2 (XYZRGB only)
@@ -71,11 +75,27 @@ def convertCloudFromRosToOpen3d(ros_cloud):
     field_names=[field.name for field in ros_cloud.fields]
     cloud_data = list(pc2.read_points(ros_cloud, skip_nans=True, field_names = field_names))
 
-    # Set open3d_cloud
+    # Check empty
     open3d_cloud = open3d.PointCloud()
+    if len(cloud_data)==0:
+        print("Converting an empty cloud")
+        return None
+
+    # Set open3d_cloud
     if "rgb" in field_names:
-        xyz = [(x,y,z) for x,y,z,rgb in cloud_data ] # get xyz
-        rgb = [convert_rgbUint32_to_tuple(rgb) for x,y,z,rgb in cloud_data ] # get rgb
+        IDX_RGB_IN_FIELD=3 # x, y, z, rgb
+        
+        # Get xyz
+        xyz = [(x,y,z) for x,y,z,rgb in cloud_data ] # (why cannot put this line below rgb?)
+
+        # Get rgb
+        # Check whether int or float
+        if type(cloud_data[0][IDX_RGB_IN_FIELD])==float: # if float (from pcl::toROSMsg)
+            rgb = [convert_rgbFloat_to_tuple(rgb) for x,y,z,rgb in cloud_data ]
+        else:
+            rgb = [convert_rgbUint32_to_tuple(rgb) for x,y,z,rgb in cloud_data ]
+
+        # combine
         open3d_cloud.points = open3d.Vector3dVector(np.array(xyz))
         open3d_cloud.colors = open3d.Vector3dVector(np.array(rgb)/255.0)
     else:
