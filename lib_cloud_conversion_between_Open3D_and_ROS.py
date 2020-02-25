@@ -76,7 +76,7 @@ def convertCloudFromRosToOpen3d(ros_cloud):
     cloud_data = list(pc2.read_points(ros_cloud, skip_nans=True, field_names = field_names))
 
     # Check empty
-    open3d_cloud = open3d.PointCloud()
+    open3d_cloud = open3d.geometry.PointCloud()
     if len(cloud_data)==0:
         print("Converting an empty cloud")
         return None
@@ -96,11 +96,11 @@ def convertCloudFromRosToOpen3d(ros_cloud):
             rgb = [convert_rgbUint32_to_tuple(rgb) for x,y,z,rgb in cloud_data ]
 
         # combine
-        open3d_cloud.points = open3d.Vector3dVector(np.array(xyz))
-        open3d_cloud.colors = open3d.Vector3dVector(np.array(rgb)/255.0)
+        open3d_cloud.points = open3d.utility.Vector3dVector(np.array(xyz))
+        open3d_cloud.colors = open3d.utility.Vector3dVector(np.array(rgb)/255.0)
     else:
         xyz = [(x,y,z) for x,y,z in cloud_data ] # get xyz
-        open3d_cloud.points = open3d.Vector3dVector(np.array(xyz))
+        open3d_cloud.points = open3d.utility.Vector3dVector(np.array(xyz))
 
     # return
     return open3d_cloud
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     else: # test XYZRGB point cloud format
         filename=PYTHON_FILE_PATH+"test_cloud_XYZRGB.pcd"
 
-    open3d_cloud = open3d.read_point_cloud(filename)
+    open3d_cloud = open3d.io.read_point_cloud(filename)
     rospy.loginfo("Loading cloud from file by open3d.read_point_cloud: ")
     print(open3d_cloud)
     print("")
@@ -164,9 +164,9 @@ if __name__ == "__main__":
 
     # write to file
     output_filename=PYTHON_FILE_PATH+"conversion_result.pcd"
-    open3d.write_point_cloud(output_filename, received_open3d_cloud)
+    open3d.io.write_point_cloud(output_filename, received_open3d_cloud)
     rospy.loginfo("-- Write result point cloud to: "+output_filename)
 
     # draw
-    open3d.draw_geometries([received_open3d_cloud])
+    open3d.visualization.draw_geometries([received_open3d_cloud])
     rospy.loginfo("-- Finish display. The program is terminating ...\n")
